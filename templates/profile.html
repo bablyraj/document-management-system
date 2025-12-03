@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Secure Docs</title>
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #08cc7f;
+            --primary-hover: #06b06d;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #111827;
+            --bg-card: #1f2937;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            height: 64px;
+        }
+
+        .navbar-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s, background-color 0.2s;
+        }
+
+        .theme-toggle-btn:hover {
+            color: var(--text-main);
+            background-color: var(--bg-body);
+        }
+
+        .user-menu-container {
+            position: relative;
+        }
+
+        .avatar-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e0e7ff;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+            overflow: hidden;
+        }
+
+        .avatar-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-btn:hover {
+            border-color: var(--primary);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 0.5rem;
+            width: 200px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-md);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 100;
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--bg-body);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 0;
+        }
+
+        .main-container {
+            max-width: 768px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .profile-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .profile-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .profile-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .profile-subtitle {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .avatar-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .avatar-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #e0e7ff;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            border: 4px solid var(--bg-card);
+            box-shadow: var(--shadow-md);
+            position: relative;
+        }
+
+        .avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .change-avatar-btn {
+            color: var(--primary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            background: none;
+            border: none;
+            text-decoration: underline;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            border-radius: 0.375rem;
+            border: 1px solid var(--border-color);
+            font-size: 0.9375rem;
+            transition: border-color 0.2s;
+            background-color: var(--bg-card);
+            color: var(--text-main);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(8, 204, 127, 0.1);
+        }
+
+        .form-input:disabled {
+            background-color: var(--bg-body);
+            color: var(--text-muted);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <img src="/assets/logo.png" width="24" height="24" alt="Secure Docs" />
+            Secure Docs
+        </a>
+        <div class="navbar-actions">
+            <button class="theme-toggle-btn" id="theme-toggle" title="Toggle theme">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="sun-icon">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="moon-icon" style="display: none;">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+            <div id="auth-actions">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </nav>
+    <main class="main-container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <h1 class="profile-title">Profile Settings</h1>
+                <p class="profile-subtitle">Manage your account information</p>
+            </div>
+
+            <div class="alert alert-success" id="success-alert">Profile updated successfully!</div>
+            <div class="alert alert-error" id="error-alert">Failed to update profile.</div>
+
+            <div class="avatar-section">
+                <div class="avatar-large" id="profile-avatar">
+                </div>
+                <button class="change-avatar-btn" id="change-avatar-btn">Change Avatar</button>
+                <input type="file" id="avatar-input" accept="image/*" style="display: none;">
+            </div>
+
+            <form id="profile-form">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" class="form-input" disabled>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="name">Full Name</label>
+                    <input type="text" id="name" class="form-input" placeholder="Enter your full name">
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="save-btn">Save Changes</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = themeToggleBtn.querySelector('.sun-icon');
+        const moonIcon = themeToggleBtn.querySelector('.moon-icon');
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            if (theme === 'dark') {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            }
+        }
+
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        setTheme(currentTheme);
+
+        themeToggleBtn.addEventListener('click', () => {
+            let theme = document.documentElement.getAttribute('data-theme');
+            theme = theme === 'dark' ? 'light' : 'dark';
+            setTheme(theme);
+        });
+
+        let user = null;
+
+        const authActions = document.getElementById('auth-actions');
+        const profileAvatar = document.getElementById('profile-avatar');
+        const changeAvatarBtn = document.getElementById('change-avatar-btn');
+        const avatarInput = document.getElementById('avatar-input');
+        const emailInput = document.getElementById('email');
+        const nameInput = document.getElementById('name');
+        const profileForm = document.getElementById('profile-form');
+        const saveBtn = document.getElementById('save-btn');
+        const successAlert = document.getElementById('success-alert');
+        const errorAlert = document.getElementById('error-alert');
+
+        async function init() {
+            const token = localStorage.getItem('access_token');
+            await fetchUser(token);
+            renderNavbar();
+            renderProfile();
+            setupListeners();
+        }
+
+        async function fetchUser(token) {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    user = await response.json();
+                    if (!user.initials) {
+                        const nameToUse = user.name || user.email;
+                        user.initials = nameToUse.substring(0, 2).toUpperCase();
+                    }
+                } else {
+                    localStorage.removeItem('access_token');
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+            }
+        }
+
+        function renderNavbar() {
+            if (user) {
+                let avatarContent = user.initials;
+                if (user.avatar_url) {
+                    avatarContent = `<img src="${user.avatar_url}" alt="Avatar">`;
+                }
+
+                authActions.innerHTML = `
+                    <div class="user-menu-container">
+                        <div class="avatar-btn" id="avatar-btn" title="${user.email}">
+                            ${avatarContent}
+                        </div>
+                        <div class="dropdown-menu" id="user-menu">
+                            <div class="dropdown-item" style="cursor: default; font-weight: 600; color: var(--text-main);">
+                                ${user.email}
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="/profile" class="dropdown-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                Profile
+                            </a>
+                            <div class="dropdown-item" id="logout-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                Sign out
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderProfile() {
+            if (user) {
+                emailInput.value = user.email;
+                nameInput.value = user.name || '';
+
+                if (user.avatar_url) {
+                    profileAvatar.innerHTML = `<img src="${user.avatar_url}" alt="Avatar">`;
+                } else {
+                    profileAvatar.textContent = user.initials;
+                }
+            }
+        }
+
+        function setupListeners() {
+            document.addEventListener('click', (e) => {
+                const avatarBtn = document.getElementById('avatar-btn');
+                const userMenu = document.getElementById('user-menu');
+
+                if (avatarBtn && userMenu) {
+                    if (avatarBtn.contains(e.target)) {
+                        userMenu.classList.toggle('show');
+                    } else if (!userMenu.contains(e.target)) {
+                        userMenu.classList.remove('show');
+                    }
+                }
+
+                const logoutBtn = document.getElementById('logout-btn');
+                if (logoutBtn && logoutBtn.contains(e.target)) {
+                    localStorage.removeItem('access_token');
+                    window.location.href = '/login';
+                }
+            });
+
+            changeAvatarBtn.addEventListener('click', () => {
+                avatarInput.click();
+            });
+
+            avatarInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        profileAvatar.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+
+            profileForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving...';
+                successAlert.style.display = 'none';
+                errorAlert.style.display = 'none';
+
+                const formData = new FormData();
+                formData.append('name', nameInput.value);
+                if (avatarInput.files[0]) {
+                    formData.append('avatar', avatarInput.files[0]);
+                }
+
+                try {
+                    const token = localStorage.getItem('access_token');
+                    const response = await fetch('http://127.0.0.1:8000/api/me', {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        const updatedUser = await response.json();
+                        user = updatedUser;
+                        const nameToUse = user.name || user.email;
+                        user.initials = nameToUse.substring(0, 2).toUpperCase();
+
+                        renderNavbar();
+                        renderProfile();
+                        successAlert.style.display = 'block';
+                    } else {
+                        errorAlert.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Error updating profile:', error);
+                    errorAlert.style.display = 'block';
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Save Changes';
+                }
+            });
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
