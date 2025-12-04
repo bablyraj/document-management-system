@@ -38,8 +38,9 @@ A secure and modern document management system built with Python (FastAPI & Flas
 |:---:|:---:|
 | ![Document Hover](assets/document_hover.png) | ![Nav Menu](assets/nav_menu.png) |
 
-### Profile
-![Profile Page](assets/profile.png)
+| Profile | About Us |
+|:---:|:---:|
+| ![Profile Page](assets/profile.png) | ![About Us](assets/about_us.png) |
 
 ## Setup & Running
 
